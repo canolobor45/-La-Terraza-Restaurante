@@ -1,40 +1,28 @@
 const express = require('express');
-const mongoose = require('mongoose');
-const jwt = require('jsonwebtoken');
-const Producto = require('./models/Producto');
-const Categoria = require('./models/Categoria');
-
 const app = express();
 app.use(express.json());
 app.use(express.static('public'));
 
-// Conexión a Base de Datos (Parte II)
-mongoose.connect('mongodb://localhost:27017/danielshop');
+// REQUISITO: Información volátil en un MAPA 
+const productos = new Map(); 
 
-// Seguridad (Parte III)
-const SECRET = "DANIELSHOP_2026";
+// API REST [cite: 45]
+app.get('/api/productos', (req, res) => res.json(Array.from(productos.values())));
 
-// Rutas de la API (Parte I)
-app.get('/api/productos', async (req, res) => {
-    const prods = await Producto.find().populate('categoria');
-    res.json(prods);
+app.post('/api/productos', (req, res) => {
+    const { id, nombre, precio } = req.body;
+    productos.set(id, { id, nombre, precio });
+    res.status(201).send("Creado");
 });
 
-app.post('/api/productos', async (req, res) => {
-    const nuevo = new Producto(req.body);
-    await nuevo.save();
-    res.status(201).json(nuevo);
+// REQUISITO: Operación PATCH [cite: 46]
+app.patch('/api/productos/:id', (req, res) => {
+    const id = req.params.id;
+    if (productos.has(id)) {
+        const actual = productos.get(id);
+        productos.set(id, { ...actual, ...req.body }); // Solo actualiza lo que envíes
+        res.send("Actualizado");
+    } else { res.status(404).send("No encontrado"); }
 });
 
-// Operación PATCH obligatoria (Parte I y II) [cite: 44, 46]
-app.patch('/api/productos/:id', async (req, res) => {
-    const actualizado = await Producto.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    res.json(actualizado);
-});
-
-app.delete('/api/productos/:id', async (req, res) => {
-    await Producto.findByIdAndDelete(req.params.id);
-    res.send("Eliminado");
-});
-
-app.listen(3000, () => console.log("Servidor Danielshop-S.L. activo"));
+app.listen(3000, () => console.log("Danielshop S.L. - Solo Parte I lista"));
