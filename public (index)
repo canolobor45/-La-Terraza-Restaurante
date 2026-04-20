@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Danielshop-S.L.</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Panel de Control - Danielshop-S.L.</h1>
+    <form id="formCrear">
+        <input type="text" id="nombre" placeholder="Producto">
+        <input type="number" id="precio" placeholder="Precio">
+        <button type="button" onclick="crear()">Guardar</button>
+    </form>
+    <hr>
+    <h2>Modificar Precio (PATCH)</h2>
+    <input type="text" id="idEdit" placeholder="ID del producto">
+    <input type="number" id="nuevoPrecio" placeholder="Nuevo precio">
+    <button type="button" onclick="actualizar()">Actualizar Parcialmente</button>
+    <script src="script.js"></script>
+</body>
+</html>
